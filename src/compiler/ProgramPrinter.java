@@ -10,37 +10,44 @@ public class ProgramPrinter implements jythonListener {
 
     @Override
     public void enterProgram(jythonParser.ProgramContext ctx) {
-        System.out.println(ctx.getText());
+        System.out.println("program start{");
     }
 
     @Override
     public void exitProgram(jythonParser.ProgramContext ctx) {
-
+        System.out.println("}");
     }
 
     @Override
     public void enterImportclass(jythonParser.ImportclassContext ctx) {
-
+        System.out.println("    import class: " + ctx.CLASSNAME());
     }
 
     @Override
     public void exitImportclass(jythonParser.ImportclassContext ctx) {
-
     }
 
     @Override
     public void enterClassDef(jythonParser.ClassDefContext ctx) {
-
+        System.out.print("    class: " + ctx.CLASSNAME(0) + "/ class parents: ");
+        if(ctx.CLASSNAME().size() == 2)
+            System.out.print("object, ");
+        else{
+            for(int i=1; i<ctx.CLASSNAME().size(); i++){
+                System.out.print(ctx.CLASSNAME(i)+", ");
+            }
+        }
+        System.out.println("{");
     }
 
     @Override
     public void exitClassDef(jythonParser.ClassDefContext ctx) {
-
+        System.out.println("    }");
     }
 
     @Override
     public void enterClass_body(jythonParser.Class_bodyContext ctx) {
-
+        System.out.print("    ");
     }
 
     @Override
@@ -50,6 +57,16 @@ public class ProgramPrinter implements jythonListener {
 
     @Override
     public void enterVarDec(jythonParser.VarDecContext ctx) {
+
+        //faghat vaghti az class_body ya statement seda zade shode chap beshe
+        if(ctx.getParent().getClass().getName().contains("Parameter") ||
+                ctx.getParent().getClass().getName().contains("Assignment"))
+            return;
+
+        //age dakhel method ha bashe matn ye tab dige bayad biad jolo
+        if(!ctx.getParent().getClass().getName().contains("Class_body"))
+            System.out.print("        ");
+        System.out.println("    field: " + ctx.ID() + "/ type= " + ctx.getChild(0));
 
     }
 
@@ -61,6 +78,10 @@ public class ProgramPrinter implements jythonListener {
     @Override
     public void enterArrayDec(jythonParser.ArrayDecContext ctx) {
 
+        if(!ctx.getParent().getClass().getName().contains("Class_body"))
+            System.out.println("    ");
+        System.out.println("    field: " + ctx.ID() + "/ type= " + ctx.getChild(0));
+
     }
 
     @Override
@@ -71,25 +92,46 @@ public class ProgramPrinter implements jythonListener {
     @Override
     public void enterMethodDec(jythonParser.MethodDecContext ctx) {
 
+        System.out.print("    class method: " + ctx.ID());
+        //farzand 1 ctx hamishe noe khurujie
+        if(!ctx.getChild(1).getText().equals("void"))
+            System.out.print("/ return type: " + ctx.getChild(1));
+        System.out.println("{");
+
     }
 
     @Override
     public void exitMethodDec(jythonParser.MethodDecContext ctx) {
-
+       System.out.println("        }");
     }
 
     @Override
     public void enterConstructor(jythonParser.ConstructorContext ctx) {
-
+        System.out.println("    class constractor: " + ctx.getChild(1) + "{");
     }
 
     @Override
     public void exitConstructor(jythonParser.ConstructorContext ctx) {
-
+        System.out.println("        }");
     }
 
     @Override
     public void enterParameter(jythonParser.ParameterContext ctx) {
+
+        System.out.print("            ");
+        System.out.print("parameter list: [");
+        if(ctx.getChildCount() == 1) {
+            System.out.println(ctx.getChild(0).getChild(0) + " " +
+                    ctx.getChild(0).getChild(1) + "]");
+            return;
+        }
+        for (int i=0 ; i<ctx.getChildCount(); i++) {
+            if (ctx.getChild(i).getText().equals(","))
+                continue;
+            System.out.print(ctx.getChild(i).getChild(0) + " " +
+                    ctx.getChild(i).getChild(1) + ", ");
+        }
+        System.out.println("]");
 
     }
 
