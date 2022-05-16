@@ -1,5 +1,3 @@
-package compiler;
-
 import gen.jythonListener;
 import gen.jythonParser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -30,11 +28,11 @@ public class ProgramPrinter implements jythonListener {
     @Override
     public void enterClassDef(jythonParser.ClassDefContext ctx) {
         System.out.print("    class: " + ctx.CLASSNAME(0) + "/ class parents: ");
-        if(ctx.CLASSNAME().size() == 2)
+        if (ctx.CLASSNAME().size() == 2)
             System.out.print("object, ");
-        else{
-            for(int i=1; i<ctx.CLASSNAME().size(); i++){
-                System.out.print(ctx.CLASSNAME(i)+", ");
+        else {
+            for (int i = 1; i < ctx.CLASSNAME().size(); i++) {
+                System.out.print(ctx.CLASSNAME(i) + ", ");
             }
         }
         System.out.println("{");
@@ -57,15 +55,20 @@ public class ProgramPrinter implements jythonListener {
 
     @Override
     public void enterVarDec(jythonParser.VarDecContext ctx) {
-
-        //faghat vaghti az class_body ya statement seda zade shode chap beshe
-        if(ctx.getParent().getClass().getName().contains("Parameter") ||
-                ctx.getParent().getClass().getName().contains("Assignment"))
-            return;
-
+        if(ctx.depth()<7) {
+            //faghat vaghti az class_body ya statement seda zade shode chap beshe
+            if (ctx.getParent().getClass().getName().contains("Parameter") ||
+                    ctx.getParent().getClass().getName().contains("Assignment"))
+                return;
+        }
         //age dakhel method ha bashe matn ye tab dige bayad biad jolo
-        if(!ctx.getParent().getClass().getName().contains("Class_body"))
+        if (!ctx.getParent().getClass().getName().contains("Class_body"))
             System.out.print("        ");
+        int depth = 9;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
         System.out.println("    field: " + ctx.ID() + "/ type= " + ctx.getChild(0));
 
     }
@@ -78,7 +81,7 @@ public class ProgramPrinter implements jythonListener {
     @Override
     public void enterArrayDec(jythonParser.ArrayDecContext ctx) {
 
-        if(!ctx.getParent().getClass().getName().contains("Class_body"))
+        if (!ctx.getParent().getClass().getName().contains("Class_body"))
             System.out.println("    ");
         System.out.println("    field: " + ctx.ID() + "/ type= " + ctx.getChild(0));
 
@@ -94,7 +97,7 @@ public class ProgramPrinter implements jythonListener {
 
         System.out.print("    class method: " + ctx.ID());
         //farzand 1 ctx hamishe noe khurujie
-        if(!ctx.getChild(1).getText().equals("void"))
+        if (!ctx.getChild(1).getText().equals("void"))
             System.out.print("/ return type: " + ctx.getChild(1));
         System.out.println("{");
 
@@ -102,7 +105,7 @@ public class ProgramPrinter implements jythonListener {
 
     @Override
     public void exitMethodDec(jythonParser.MethodDecContext ctx) {
-       System.out.println("        }");
+        System.out.println("        }");
     }
 
     @Override
@@ -120,12 +123,12 @@ public class ProgramPrinter implements jythonListener {
 
         System.out.print("            ");
         System.out.print("parameter list: [");
-        if(ctx.getChildCount() == 1) {
+        if (ctx.getChildCount() == 1) {
             System.out.println(ctx.getChild(0).getChild(0) + " " +
                     ctx.getChild(0).getChild(1) + "]");
             return;
         }
-        for (int i=0 ; i<ctx.getChildCount(); i++) {
+        for (int i = 0; i < ctx.getChildCount(); i++) {
             if (ctx.getChild(i).getText().equals(","))
                 continue;
             System.out.print(ctx.getChild(i).getChild(0) + " " +
@@ -141,13 +144,12 @@ public class ProgramPrinter implements jythonListener {
     }
 
     @Override
-    public void enterStatement(jythonParser.StatementContext ctx) {
+    public void enterStatement(jythonParser.StatementContext ctx){
 
     }
 
     @Override
     public void exitStatement(jythonParser.StatementContext ctx) {
-
     }
 
     @Override
@@ -182,32 +184,74 @@ public class ProgramPrinter implements jythonListener {
 
     @Override
     public void enterIf_statment(jythonParser.If_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        nested statement{");
+        }
     }
 
     @Override
     public void exitIf_statment(jythonParser.If_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        }");
+        }
     }
 
     @Override
     public void enterWhile_statment(jythonParser.While_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        nested statement{");
+        }
     }
 
     @Override
     public void exitWhile_statment(jythonParser.While_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        }");
+        }
     }
 
     @Override
     public void enterIf_else_statment(jythonParser.If_else_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        nested statement{");
+        }
     }
 
     @Override
     public void exitIf_else_statment(jythonParser.If_else_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        }");
+        }
     }
 
     @Override
@@ -222,12 +266,26 @@ public class ProgramPrinter implements jythonListener {
 
     @Override
     public void enterFor_statment(jythonParser.For_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        nested statement{");
+        }
     }
 
     @Override
     public void exitFor_statment(jythonParser.For_statmentContext ctx) {
-
+        int depth = 7;
+        while(ctx.depth() > depth){
+            System.out.print("    ");
+            depth += 2;
+        }
+        if(ctx.depth() > 7){
+            System.out.println("        }");
+        }
     }
 
     @Override

@@ -1,6 +1,3 @@
-package compiler;
-
-
 import gen.jythonLexer;
 import gen.jythonListener;
 import gen.jythonParser;
@@ -15,7 +12,7 @@ import java.io.IOException;
 
 public class Compiler {
     public static void main(String[] args) throws IOException{
-        CharStream stream = CharStreams.fromFileName("./sample/input.txt");
+        CharStream stream = CharStreams.fromFileName("./sample/input2.txt");
         jythonLexer lexer = new jythonLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
         jythonParser parser = new jythonParser(tokens);
